@@ -1,0 +1,32 @@
+name: TDD Test Execution Automation
+
+# 어떤 이벤트가 발생했을 때 이 자동화 코드를 실행할지 정의
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest # 자동화가 실행될 가상 환경
+
+    steps:
+    - name: 1. 저장소 코드 가져오기
+      uses: actions/checkout@v4
+
+    - name: 2. JDK 20 설정 (사용자 환경 동기화)
+      uses: actions/setup-java@v3
+      with:
+        java-version: '20'
+        distribution: 'temurin'
+        cache: maven # 빌드 속도 향상을 위한 캐싱
+
+    - name: 3. Maven을 통한 테스트 자동 실행
+      run: mvn -B clean test --file pom.xml
+
+    - name: 4. 테스트 결과 리포트 요약 출력
+      if: always() # 성공하든 실패하든 항상 실행
+      run: |
+        echo "테스트 자동화 워크플로우가 종료되었습니다."
+        echo "자세한 결과는 GitHub Actions 탭의 로그를 확인하세요."
