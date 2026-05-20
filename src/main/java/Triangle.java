@@ -1,15 +1,11 @@
 import java.util.Arrays;
 
 public class Triangle {
-    // 1. 객체의 불변성(Immutability) 보장: final 키워드 사용
     private final int side1;
     private final int side2;
     private final int side3;
-
-    // 미리 정렬된 배열을 캐싱하여 반복 연산 제거
     private final long[] sortedSides;
 
-    // 2. 타입 안정성을 위한 Enum 도입 (오타 원천 차단)
     public enum Type {
         EQUILATERAL("equilateral"),
         ISOSCELES("isosceles"),
@@ -32,7 +28,6 @@ public class Triangle {
     }
 
     public Triangle setSideLengths(int s1, int s2, int s3) {
-        // 기존 상태를 변경하지 않고 새로운 객체 반환 (불변성)
         return new Triangle(s1, s2, s3);
     }
 
@@ -40,8 +35,9 @@ public class Triangle {
         return side1 + "," + side2 + "," + side3;
     }
 
-    public int getPerimeter() {
-        return side1 + side2 + side3;
+    // [정적 분석 조치]: 잠재적 정수 오버플로우 방지를 위해 반환 타입을 int에서 long으로 변경 및 형변환
+    public long getPerimeter() {
+        return (long) side1 + side2 + side3;
     }
 
     public double getArea() {
@@ -54,7 +50,6 @@ public class Triangle {
 
     public String classify() {
         if (isImpossible()) return Type.IMPOSSIBLE.getLabel();
-
         if (side1 == side2 && side2 == side3) return Type.EQUILATERAL.getLabel();
         if (side1 == side2 || side1 == side3 || side2 == side3) return Type.ISOSCELES.getLabel();
         if (isRightAngled()) return Type.RIGHT_ANGLED.getLabel();
